@@ -1,0 +1,22 @@
+
+
+.contact-us{
+    margin-top: 3rem;
+    height: 100%;
+}
+
+.contact-us div{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.contact-us div img{
+    width: 80%;
+    height: 50%;
+}
+
+.contact-us .contact-wrap{
+    flex-direction: row;
+}
