@@ -5,31 +5,35 @@ const  cors = require('cors')
 const app = express()
 const port = 3030;
 
+
 app.use(cors())
 app.use(require('body-parser').urlencoded({ extended: false }));
 
-const reviews_data = JSON.parse(fs.readFileSync("reviews.json", 'utf8'));
-const dealerships_data = JSON.parse(fs.readFileSync("dealerships.json", 'utf8'));
-
-mongoose.connect("mongodb://mongo_db:27017/",{'dbName':'dealershipsDB'});
-
+const reviews_data = JSON.parse(fs.readFileSync("./data/reviews.json", 'utf8'));
+const dealerships_data = JSON.parse(fs.readFileSync("./data/dealerships.json", 'utf8'));
 
 const Reviews = require('./review');
-
 const Dealerships = require('./dealership');
 
-try {
-  Reviews.deleteMany({}).then(()=>{
-    Reviews.insertMany(reviews_data['reviews']);
-  });
-  Dealerships.deleteMany({}).then(()=>{
-    Dealerships.insertMany(dealerships_data['dealerships']);
-  });
-  
+async function connectDB(){
+  try {
+    // const connected = await mongoose.connect("mongodb://mongo_db:27017/",{'dbName':'dealershipsDB'});
+    // if(connected)
+    // {
+        console.log("connection succesful")
+        await Reviews.deleteMany({})
+        await Reviews.insertMany(reviews_data['reviews']);
+
+        Dealerships.deleteMany({}).then(()=>{
+        Dealerships.insertMany(dealerships_data['dealerships']); });
+   //  }
 } catch (error) {
-  res.status(500).json({ error: 'Error fetching documents' });
+  console.log(error)
+  // res.status(500).json({ error: 'Error fetching documents' });
+}
 }
 
+connectDB()
 
 // Express route to home
 app.get('/', async (req, res) => {
@@ -40,7 +44,7 @@ app.get('/', async (req, res) => {
 app.get('/fetchReviews', async (req, res) => {
   try {
     const documents = await Reviews.find();
-    res.json(documents);
+    await res.json(documents);
   } catch (error) {
     res.status(500).json({ error: 'Error fetching documents' });
   }
@@ -98,7 +102,8 @@ app.post('/insert_review', express.raw({ type: '*/*' }), async (req, res) => {
   }
 });
 
+
 // Start the Express server
-app.listen(port, () => {
+app.listen(port, async () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
