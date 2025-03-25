@@ -4,8 +4,9 @@ const fs = require('fs');
 const  cors = require('cors')
 const app = express()
 const port = 3030;
+require('dotenv').config()
 
-
+const dbURI = `mongodb+srv://Maico:${process.env.MONGOPW}@cluster2025.i4yl2.mongodb.net/dealershipDB?retryWrites=true&w=majority&appName=Cluster2025`
 app.use(cors())
 app.use(require('body-parser').urlencoded({ extended: false }));
 
@@ -17,23 +18,21 @@ const Dealerships = require('./dealership');
 
 async function connectDB(){
   try {
-    // const connected = await mongoose.connect("mongodb://mongo_db:27017/",{'dbName':'dealershipsDB'});
-    // if(connected)
-    // {
+    const db = await mongoose.connect(dbURI);
+    if(db)
+    {
         console.log("connection succesful")
         await Reviews.deleteMany({})
         await Reviews.insertMany(reviews_data['reviews']);
 
         Dealerships.deleteMany({}).then(()=>{
         Dealerships.insertMany(dealerships_data['dealerships']); });
-   //  }
+    }
 } catch (error) {
   console.log(error)
   // res.status(500).json({ error: 'Error fetching documents' });
 }
 }
-
-connectDB()
 
 // Express route to home
 app.get('/', async (req, res) => {
@@ -105,5 +104,6 @@ app.post('/insert_review', express.raw({ type: '*/*' }), async (req, res) => {
 
 // Start the Express server
 app.listen(port, async () => {
+  connectDB()
   console.log(`Server is running on http://localhost:${port}`);
 });
