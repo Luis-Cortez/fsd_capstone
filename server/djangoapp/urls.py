@@ -13,6 +13,8 @@ urlpatterns = [
     path(route='login', view=views.login_user, name='login'),
     path(route='logout', view=views.logout_request, name='logout'),
     path(route='getcars', view=views.get_cars, name ='getcars'),
+    # path(route='get_dealers', view=views.get_dealers, name ='getdealers'),
+
     # path for dealer reviews view
     #path("reviews", views.reviews, name="reviews"),
 
