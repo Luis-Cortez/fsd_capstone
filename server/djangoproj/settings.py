@@ -34,7 +34,7 @@ REST_FRAMEWORK = {
 }
 
 # Application definition
-
+CORS_WHITELIST = ['http://localhost:3030']
 INSTALLED_APPS = [
     'djangoapp.apps.DjangoappConfig',
     'django.contrib.admin',
